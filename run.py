@@ -18,7 +18,7 @@ class NadaSoda:
         self._slack_channel = slack_channel if slack_channel.startswith("#") else "#"+slack_channel
         self._slack_token = slack_token
 
-    def run(self):
+    def run(self) -> None:
         for f in os.listdir(self._soda_checks_folder):
             gcp_project, dataset, scan = self._run_scan(f)
             if scan.has_check_warns_or_fails():
@@ -42,7 +42,7 @@ class NadaSoda:
 
         raise KeyError(f"dataset {dataset} not found in config")
 
-    def _post_slack(self, gcp_project: str, dataset: str, discrepancies: list[MetricCheck]):
+    def _post_slack(self, gcp_project: str, dataset: str, discrepancies: list[MetricCheck]) -> None:
         discrepancies_unpacked = self._unpack_and_remove_duplicates(discrepancies)
         errors, warnings = self._separate_errors_and_warnings(discrepancies_unpacked)
 
@@ -79,7 +79,7 @@ class NadaSoda:
 
         return errors, warnings
 
-    def _create_error_slack_attachment(self, gcp_project: str, dataset: str, errors: list[dict]):
+    def _create_error_slack_attachment(self, gcp_project: str, dataset: str, errors: list[dict]) -> dict:
         content = "\n".join([self._create_test_result(e) for e in errors])
         return {
             "fallback": "Tester med feil",
@@ -90,7 +90,7 @@ class NadaSoda:
             "footer": "SODA Bot"
         }
 
-    def _create_warning_slack_attachment(self, gcp_project: str, dataset: str, warnings: list[dict]):
+    def _create_warning_slack_attachment(self, gcp_project: str, dataset: str, warnings: list[dict]) -> dict:
         content = "\n".join([self._create_test_result(e) for e in warnings])
         return {
             "fallback": "Tester med varslinger",
