@@ -35,11 +35,12 @@ class NadaSoda:
 
     def run(self) -> None:
         for f in os.listdir(self._soda_checks_folder):
-            gcp_project, dataset, scan = self._run_scan(f)
-            if scan.has_check_warns_or_fails():
-                self._post_slack(gcp_project, dataset, scan.get_checks_warn_or_fail())
+            if f.endswith(".yaml"):
+                gcp_project, dataset, scan = self._run_scan(f)
+                if scan.has_check_warns_or_fails():
+                    self._post_slack(gcp_project, dataset, scan.get_checks_warn_or_fail())
 
-            self._write_to_topic(gcp_project, dataset, scan)
+                self._write_to_topic(gcp_project, dataset, scan)
 
     def _run_scan(self, f: str) -> tuple[str, str, Scan]:
         s = Scan()
