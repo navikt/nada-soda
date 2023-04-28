@@ -11,6 +11,8 @@ spec:
     outbound:
       external:
       - host: hooks.slack.com
+  kafka:
+    pool: nav-dev
   env:
     - name: SODA_CONFIG
       value: /var/run/configmaps/soda-config/config.yaml
