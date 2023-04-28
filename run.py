@@ -103,7 +103,7 @@ class NadaSoda:
 
     def _create_test_result(self, e: dict) -> str:
         return "\n".join([
-            f"_*Table: {e['table']}*_" + (f" _*column: {e.get('column')}*_" if e.get('column') else ""), 
+            f"_*Tabell: {e['table']}*_" + (f" _*kolonne: {e.get('column')}*_" if e.get('column') else ""), 
             f"Test: {e['name']}"
         ])
 
