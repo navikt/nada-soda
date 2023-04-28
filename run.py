@@ -168,7 +168,7 @@ if __name__ == "__main__":
         logging.error("Environment variables SODA_CONFIG, SODA_CHECKS_FOLDER, SLACK_CHANNEL and SLACK_TOKEN are all required to run this script")
         exit(1)
     
-    soda_checks = NadaSoda(config_path, checks_path, slack_channel, slack_token)
+    soda_checks = NadaSoda(config_path, checks_path, slack_channel, slack_token, kafka_topic)
     try:
         soda_checks.run()
     except:
