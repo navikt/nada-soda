@@ -134,7 +134,7 @@ class NadaSoda:
     def _write_to_topic(self, gcp_project: str, dataset: str, scan: Scan) -> None:
         for res in scan.get_scan_results()["checks"]:
             key, message = self._create_message(gcp_project, dataset, res)
-            self._kafka_producer.send(self._kafka_topic, key=key, value=message)
+            self._kafka_producer.send(self._kafka_topic, key=key.encode(), value=message)
 
     def _create_message(self, gcp_project: str, dataset: str, res: dict) -> tuple[str, dict]:
         message_key = self._create_message_key(gcp_project, dataset, res)
