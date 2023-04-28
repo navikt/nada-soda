@@ -20,6 +20,8 @@ spec:
       value: /var/run/configmaps/soda-checks
     - name: SLACK_CHANNEL
       value: "#kubeflow-cron-alerts"
+    - name: KAFKA_TOPIC
+      value: nada.nada-soda
   schedule: '11 5 * * *'
   failedJobsHistoryLimit: 1
   successfulJobsHistoryLimit: 1
