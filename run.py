@@ -15,6 +15,7 @@ class NadaSoda:
         self._soda_config = soda_config
         self._soda_checks_folder = soda_checks_folder
         self._slack_channel = slack_channel if slack_channel.startswith("#") else "#"+slack_channel
+        self._soda_api = os.getenv("SODA_API")
 
     def run(self) -> None:
         for f in os.listdir(self._soda_checks_folder):
