@@ -1,8 +1,8 @@
-# NADA soda
+# NADA Soda
 Naisjob example for periodically running [soda](https://github.com/sodadata/soda-core) checks against BigQuery tables and posting data quality errors to slack.
 
 ## Prerequisites
-The python script requires 
+The python script requires
 
 - A [soda config](https://docs.soda.io/soda/connect-bigquery.html#connection-configuration) for connecting to one or several BigQuery datasource(s). See [config example](https://github.com/navikt/nada-soda/blob/main/.local/soda-config/config.yaml) for configuring this for nais.
 - One or several [soda check config(s)](https://docs.soda.io/soda-cl/soda-cl-overview.html) describing the checks you want to perform on the BigQuery tables. See [config folder](https://github.com/navikt/nada-soda/tree/main/.local/soda-checks) for examples.
@@ -11,7 +11,7 @@ The python script requires
 
 All of the above requirements must be configured with environment variables as described in [Required environment variables](#required-environment-variables) below.
 
-The soda config and the soda check files needs to be mounted into the container environment on nais. In this example these configurations files are mounted from configmaps deployed together with the naisjob to the cluster. See [.nais folder](https://github.com/navikt/nada-soda/tree/main/.nais) for example on how to do this. In this example the slack token is set as an [environment variable from a secret](https://github.com/navikt/nada-soda/blob/main/.nais/naisjob.yaml#L30) in the cluster deployed manually where the key in the secret is `SLACK_TOKEN`.
+The soda config and the soda check files needs to be mounted into the container environment on nais. In this example these configurations files are mounted from configmaps deployed together with the naisjob to the cluster. See [.nais folder](https://github.com/navikt/nada-soda/tree/main/.nais) for example on how to do this.
 
 You will also need additional [project level iam roles](https://github.com/navikt/nada-soda/blob/main/.nais/naisjob.yaml#L32-L47) for the naisjob service account in order to be allowed to perform the soda checks.
 
@@ -21,7 +21,6 @@ Note: The script requires that a datasource name matches the file name for the c
 - `SODA_CONFIG`: Path to soda config file
 - `SODA_CHECKS_FOLDER`: Path to folder containing soda check files for BigQuery datasets
 - `SLACK_CHANNEL`: Desired slack channel for posting data quality errors
-- `SLACK_TOKEN`: Token for the slack app used to post error messages
 
 ## Build and push image
 ````bash

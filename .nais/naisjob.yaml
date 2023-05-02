@@ -9,8 +9,9 @@ spec:
   image: {{ image }}
   accessPolicy:
     outbound:
-      external:
-      - host: hooks.slack.com
+      rules:
+      - application: nada-soda
+        namespace: nada
   kafka:
     pool: nav-dev
   env:
