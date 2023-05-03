@@ -43,7 +43,7 @@ class NadaSoda:
 
     def _publish_results(self, gcp_project: str, dataset: str, scan: Scan):
         results = [self._create_soda_result(r) for r in scan.get_scan_results().get("checks")]
-        res = requests.post("https://nada-soda.intern.dev.nav.no/soda/new", json={
+        res = requests.post(f"{self._soda_api}/soda/new", json={
             "gcpProject": gcp_project,
             "dataset": dataset,
             "slackChannel": self._slack_channel,
