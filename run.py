@@ -42,15 +42,18 @@ class NadaSoda:
         raise KeyError(f"dataset {dataset} not found in config")
 
     def _publish_results(self, gcp_project: str, dataset: str, scan: Scan):
-        results = [self._create_soda_result(gcp_project, dataset, r) for r in scan.get_scan_results().get("checks")]
-        res = requests.post("https://nada-soda.intern.dev.nav.no/soda/new", json=results)
+        results = [self._create_soda_result(r) for r in scan.get_scan_results().get("checks")]
+        res = requests.post("https://nada-soda.intern.dev.nav.no/soda/new", json={
+            "gcpProject": gcp_project,
+            "dataset": dataset,
+            "slackChannel": self._slack_channel,
+            "testResults": results
+        })
         res.raise_for_status()
 
-    def _create_soda_result(self, gcp_project: str, dataset: str, res: dict) -> dict:
+    def _create_soda_result(self, res: dict) -> dict:
         return {
             "id": res["identity"],
-            "project": gcp_project,
-            "dataset": dataset,
             "table": res["table"],
             "test": res["name"],
             "definition": res["definition"],

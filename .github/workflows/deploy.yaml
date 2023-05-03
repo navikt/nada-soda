@@ -15,7 +15,6 @@ jobs:
       - name: set version
         id: set-version
         run: echo ::set-output name=version::"$(date '+%Y-%m-%d')-$(git --no-pager log -1 --pretty=%h)"
-
   build-and-deploy:
     name: Build and deploy
     runs-on: ubuntu-20.04
