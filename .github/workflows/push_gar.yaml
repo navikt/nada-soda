@@ -20,4 +20,4 @@ jobs:
         with:
           team: nada
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: nada-dev-db2e
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
