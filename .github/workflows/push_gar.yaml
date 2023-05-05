@@ -1,0 +1,19 @@
+name: push image to knada-gcp gar
+
+on:
+  push:
+
+jobs:
+  build_and_push_image:
+    permissions:
+      contents: "read"
+      id-token: "write"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: nada
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: nada-dev-db2e
