@@ -3,6 +3,10 @@ name: push image to knada-gcp gar
 on:
   push:
 
+permissions:
+   contents: read
+   id-token: write
+
 jobs:
   build_and_push_image:
     permissions:
