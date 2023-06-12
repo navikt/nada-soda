@@ -32,7 +32,7 @@ class NadaSoda:
         s.execute()
         return self._get_gcp_project(dataset), dataset, s
 
-    def _add_configuration_yaml(s: Scan, config_file: str) -> None:
+    def _add_configuration_yaml(self, s: Scan, config_file: str) -> None:
         with open(config_file, "r") as f:
             cfg = yaml.safe_load(f.read())
         cfg["send_anonymous_usage_stats"] = False
