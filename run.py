@@ -25,15 +25,15 @@ class NadaSoda:
 
     def _run_scan(self, f: str) -> tuple[str, str, Scan]:
         s = Scan()
-        self._add_configuration_yaml(s, f)
+        self._add_configuration_yaml(s)
         dataset = f.split(".")[0]
         s.set_data_source_name(dataset)
         s.add_sodacl_yaml_file(f"{self._soda_checks_folder}/{f}")
         s.execute()
         return self._get_gcp_project(dataset), dataset, s
 
-    def _add_configuration_yaml(self, s: Scan, config_file: str) -> None:
-        with open(config_file, "r") as f:
+    def _add_configuration_yaml(self, s: Scan) -> None:
+        with open(self._soda_config, "r") as f:
             cfg = yaml.safe_load(f.read())
         cfg["send_anonymous_usage_stats"] = False
         s.add_configuration_yaml_str(yaml.dump(cfg))
