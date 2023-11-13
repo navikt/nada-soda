@@ -8,6 +8,10 @@ on:
 env:
   IMAGE: tester
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     name: Build image
