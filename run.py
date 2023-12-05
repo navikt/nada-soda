@@ -42,8 +42,12 @@ class NadaSoda:
         with open(self._soda_config, "r") as f:
             cfg = yaml.safe_load(f)
         for k in cfg.keys():
-            if cfg[k]["connection"]["dataset"] == dataset:
-                return cfg[k]["connection"]["project_id"]
+            try:
+                if cfg[k]["connection"]["dataset"] == dataset:
+                    return cfg[k]["connection"]["project_id"]
+            except KeyError:
+                if cfg[k]["dataset"] == dataset:
+                    return cfg[k]["project_id"]
 
         raise KeyError(f"dataset {dataset} not found in config")
 
