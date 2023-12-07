@@ -4,6 +4,7 @@ import logging
 import requests
 from datetime import datetime
 from soda.scan import Scan
+import logging
 
 class NadaSoda:
     def __init__(
@@ -21,7 +22,9 @@ class NadaSoda:
         for f in os.listdir(self._soda_checks_folder):
             if f.endswith(".yaml"):
                 gcp_project, dataset, scan = self._run_scan(f)
+                logging.info(f"Scan {f} finished")
                 self._publish_results(gcp_project, dataset, scan)
+                logging.info(f"Successfully published results from scan {f}")
 
     def _run_scan(self, f: str) -> tuple[str, str, Scan]:
         s = Scan()
