@@ -1,5 +1,7 @@
 FROM python:3.10
 
+LABEL "org.opencontainers.image.source"="https://github.com/navikt/nada-soda"
+
 ARG USER=soda
 ARG UID=1069
 ARG USER_HOME_DIR=/home/soda
