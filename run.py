@@ -21,23 +21,35 @@ class NadaSoda:
         for f in os.listdir(self._soda_checks_folder):
             if f.endswith(".yaml"):
                 gcp_project, dataset, scan = self._run_scan(f)
+                logging.info(f"Scan {f} finished")
                 self._publish_results(gcp_project, dataset, scan)
+                logging.info(f"Successfully published results from scan {f}")
 
     def _run_scan(self, f: str) -> tuple[str, str, Scan]:
         s = Scan()
-        s.add_configuration_yaml_file(file_path=self._soda_config)
+        self._add_configuration_yaml(s)
         dataset = f.split(".")[0]
         s.set_data_source_name(dataset)
         s.add_sodacl_yaml_file(f"{self._soda_checks_folder}/{f}")
         s.execute()
         return self._get_gcp_project(dataset), dataset, s
 
+    def _add_configuration_yaml(self, s: Scan) -> None:
+        with open(self._soda_config, "r") as f:
+            cfg = yaml.safe_load(f.read())
+        cfg["send_anonymous_usage_stats"] = False
+        s.add_configuration_yaml_str(yaml.dump(cfg))
+
     def _get_gcp_project(self, dataset: str) -> str:
         with open(self._soda_config, "r") as f:
             cfg = yaml.safe_load(f)
         for k in cfg.keys():
-            if cfg[k]["connection"]["dataset"] == dataset:
-                return cfg[k]["connection"]["project_id"]
+            try:
+                if cfg[k]["connection"]["dataset"] == dataset:
+                    return cfg[k]["connection"]["project_id"]
+            except KeyError:
+                if cfg[k]["dataset"] == dataset:
+                    return cfg[k]["project_id"]
 
         raise KeyError(f"dataset {dataset} not found in config")
 
