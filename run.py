@@ -3,8 +3,12 @@ import yaml
 import logging
 import requests
 from datetime import datetime
+
+from soda.common.config_helper import ConfigHelper
+cfg = ConfigHelper.get_instance("/tmp/.soda/config.yml")
+cfg.DEFAULT_CONFIG["send_anonymous_usage_stats"] = False
+
 from soda.scan import Scan
-import logging
 
 class NadaSoda:
     def __init__(
@@ -88,7 +92,7 @@ if __name__ == "__main__":
     except KeyError:
         logging.error("Environment variables SODA_CONFIG, SODA_CHECKS_FOLDER and SLACK_CHANNEL are all required to run this script")
         exit(1)
-    
+
     soda_checks = NadaSoda(config_path, checks_path, slack_channel)
     try:
         soda_checks.run()
