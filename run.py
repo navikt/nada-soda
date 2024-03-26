@@ -10,6 +10,8 @@ cfg.DEFAULT_CONFIG["send_anonymous_usage_stats"] = False
 
 from soda.scan import Scan
 
+logging.basicConfig(level=logging.INFO)
+
 class NadaSoda:
     def __init__(
         self,
@@ -43,6 +45,7 @@ class NadaSoda:
         with open(self._soda_config, "r") as f:
             cfg = yaml.safe_load(f.read())
         s.add_configuration_yaml_str(yaml.dump(cfg))
+        
 
     def _get_gcp_project(self, dataset: str) -> str:
         with open(self._soda_config, "r") as f:
