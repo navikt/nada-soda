@@ -42,7 +42,6 @@ class NadaSoda:
     def _add_configuration_yaml(self, s: Scan) -> None:
         with open(self._soda_config, "r") as f:
             cfg = yaml.safe_load(f.read())
-        cfg["send_anonymous_usage_stats"] = False
         s.add_configuration_yaml_str(yaml.dump(cfg))
 
     def _get_gcp_project(self, dataset: str) -> str:
