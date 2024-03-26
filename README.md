@@ -1,8 +1,4 @@
 # NADA Soda
-Repo for generelt dockerimage brukt av soda-jobber som kjører i teamnamespaces. Se eksempel for naisjobb [her](https://github.com/navikt/dp-nada-soda). Se skisse av hvordan tester kjøres og sentralisert samling av resultater samt varsling av avvik til slack [her](https://github.com/navikt/nada-soda-service#skisse).
-
-## Build and push image
-````bash
-docker build -t ghcr.io/navikt/nada-soda:<tag> .
-docker push ghcr.io/navikt/nada-soda:<tag>
-````
+Repo for felles Docker image brukt av Soda-jobber som kjører i teamets namespace på Nais.
+Se eksempel på en Naisjobb i [navikt/dp-nada-soda](https://github.com/navikt/dp-nada-soda). 
+Se skisse av hvordan tester kjøres, sentralisert samling av resultater, og varsling av avvik til Slack i [navikt/nada-soda-service](https://github.com/navikt/nada-soda-service#skisse).

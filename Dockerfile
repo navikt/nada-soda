@@ -1,4 +1,6 @@
-FROM python:3.10
+FROM python:3.12
+
+LABEL "org.opencontainers.image.source"="https://github.com/navikt/nada-soda"
 
 ARG USER=soda
 ARG UID=1069
