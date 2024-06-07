@@ -29,8 +29,11 @@ class NadaSoda:
             if f.endswith(".yaml"):
                 gcp_project, dataset, scan = self._run_scan(f)
                 logging.info(f"Scan {f} finished")
-                self._publish_results(gcp_project, dataset, scan)
-                logging.info(f"Successfully published results from scan {f}")
+                if not scan.has_error_logs():
+                    self._publish_results(gcp_project, dataset, scan)
+                    logging.info(f"Successfully published results from scan {f}")
+                else:
+                    logging.error(f"Not publishing results due to scan errors. Errors for scan {f}:\n{scan.get_error_logs_text()}")
 
     def _run_scan(self, f: str) -> tuple[str, str, Scan]:
         s = Scan()
