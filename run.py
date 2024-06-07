@@ -66,7 +66,7 @@ class NadaSoda:
             "gcpProject": gcp_project,
             "dataset": dataset,
             "slackChannel": self._slack_channel,
-            "slackNotifyOnScanPassed": os.getenv("REPORT_OK_STATUS"),
+            "slackNotifyOnScanPassed": os.getenv("NOTIFY_OK_SCAN_STATUS"),
             "testResults": results
         })
         res.raise_for_status()
