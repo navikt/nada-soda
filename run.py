@@ -67,7 +67,8 @@ class NadaSoda:
             "dataset": dataset,
             "slackChannel": self._slack_channel,
             "slackNotifyOnScanPassed": os.getenv("NOTIFY_OK_SCAN_STATUS"),
-            "testResults": results
+            "testResults": results,
+            "configError": scan.get_error_logs_text() if scan.has_error_logs() else None,
         })
         res.raise_for_status()
 
