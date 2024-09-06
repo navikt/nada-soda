@@ -22,11 +22,12 @@ RUN pip --python venv/bin/python install -r requirements.txt
 FROM gcr.io/distroless/python3-debian12 AS runner
 
 ARG USER=soda
+ARG UID=1069
 ARG USER_HOME_DIR=/home/soda
 
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /etc/group /etc/group
-COPY --from=builder ${USER_HOME_DIR} ${USER_HOME_DIR}
+COPY --from=builder --chown=${USER}:${UID} /etc/passwd /etc/passwd
+COPY --from=builder --chown=${USER}:${UID} /etc/group /etc/group
+COPY --from=builder --chown=${USER}:${UID} ${USER_HOME_DIR} ${USER_HOME_DIR}
 
 COPY --from=builder /app /app       
 
