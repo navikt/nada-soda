@@ -10,13 +10,28 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
       - name: Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v2
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
+      
+      - name: Check for Dockerfile changes
+        id: dockerfile-check
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -q 'Dockerfile'; then
+            echo "Dockerfile changes detected."
+            echo "dockerfile_changed=true" >> $GITHUB_ENV
+          else
+            echo "No Dockerfile changes detected."
+            echo "dockerfile_changed=false" >> $GITHUB_ENV
+          fi
+
       - name: Enable auto-merge for Dependabot PRs
-        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major' && env.dockerfile_changed == 'false'
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
