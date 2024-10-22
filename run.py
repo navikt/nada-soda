@@ -1,10 +1,11 @@
-import os
-import yaml
 import logging
-import requests
+import os
 from datetime import datetime
 
+import requests
+import yaml
 from soda.common.config_helper import ConfigHelper
+
 cfg = ConfigHelper.get_instance("/tmp/.soda/config.yml")
 cfg.DEFAULT_CONFIG["send_anonymous_usage_stats"] = False
 
@@ -17,12 +18,14 @@ class NadaSoda:
         self,
         soda_config: str, 
         soda_checks_folder: str,
-        slack_channel : str
+        slack_channel : str,
+        docker_image : str
     ) -> None:
         self._soda_config = soda_config
         self._soda_checks_folder = soda_checks_folder
         self._slack_channel = slack_channel if slack_channel.startswith("#") else "#"+slack_channel
         self._soda_api = os.getenv("SODA_API")
+        self._docker_image = os.getenv("NAIS_APP_IMAGE")
 
     def run(self) -> None:
         for f in os.listdir(self._soda_checks_folder):
@@ -67,6 +70,7 @@ class NadaSoda:
             "dataset": dataset,
             "slackChannel": self._slack_channel,
             "slackNotifyOnScanPassed": os.getenv("NOTIFY_OK_SCAN_STATUS"),
+            "dockerImage": self._docker_image,
             "testResults": results,
             "configError": scan.get_error_logs_text() if scan.has_error_logs() else None,
         })
@@ -97,7 +101,7 @@ if __name__ == "__main__":
         logging.error("Environment variables SODA_CONFIG, SODA_CHECKS_FOLDER and SLACK_CHANNEL are all required to run this script")
         exit(1)
 
-    soda_checks = NadaSoda(config_path, checks_path, slack_channel)
+    soda_checks = NadaSoda(config_path, checks_path, slack_channel, os.environ["NAIS_APP_IMAGE"])
     try:
         soda_checks.run()
     except:
