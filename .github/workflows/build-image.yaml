@@ -26,3 +26,4 @@ jobs:
         with: 
           name: ${{ steps.docker-build-push.outputs.tag }}
           makeLatest: true
+          tag: ${{ steps.docker-build-push.outputs.tag }}
