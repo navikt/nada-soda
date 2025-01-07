@@ -1,4 +1,4 @@
 google-cloud-bigquery-storage==2.27.0
 pyarrow==18.1.0
 pyyaml==6.0.2
-soda-core-bigquery==3.4.3
+soda-core-bigquery==3.4.4
