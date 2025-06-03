@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  packages: write
   id-token: write
 
 jobs:
@@ -19,6 +20,12 @@ jobs:
         id: docker-build-push
         with:
           team: nada
+      - name: Push GHCR
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ steps.docker-build-push.outputs.tag }}
       - name: Create release
         uses: ncipollo/release-action@v1
         with: 
