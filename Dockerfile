@@ -19,7 +19,7 @@ RUN python3 -m venv venv --without-pip
 RUN pip --python venv/bin/python install -r requirements.txt
 
 
-FROM gcr.io/distroless/python3-debian12 AS runner
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/python@sha256:01639e664f8b3ceba142c711232c50016dd8215a1d16d47d46da4ce707d4bfd5
 
 ARG USER=soda
 ARG UID=1069
