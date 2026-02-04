@@ -18,4 +18,4 @@ jobs:
       - uses: navikt/digestabot@v1.1 
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          team: teamdagpenger
+          team: nada
