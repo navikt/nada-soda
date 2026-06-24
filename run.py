@@ -3,94 +3,79 @@ import os
 from datetime import datetime
 
 import requests
-import yaml
-from soda.common.config_helper import ConfigHelper
-
-cfg = ConfigHelper.get_instance("/tmp/.soda/config.yml")
-cfg.DEFAULT_CONFIG["send_anonymous_usage_stats"] = False
-
-from soda.scan import Scan
+from soda_core.contracts import verify_contract_locally
+from soda_core.contracts.contract_verification import CheckOutcome
 
 logging.basicConfig(level=logging.INFO)
+
 
 class NadaSoda:
     def __init__(
         self,
-        soda_config: str, 
+        soda_config: str,
         soda_checks_folder: str,
-        slack_channel : str,
-        docker_image : str
+        slack_channel: str,
     ) -> None:
         self._soda_config = soda_config
         self._soda_checks_folder = soda_checks_folder
-        self._slack_channel = slack_channel if slack_channel.startswith("#") else "#"+slack_channel
+        self._slack_channel = slack_channel if slack_channel.startswith("#") else "#" + slack_channel
         self._soda_api = os.getenv("SODA_API")
         self._docker_image = os.getenv("NAIS_APP_IMAGE")
 
     def run(self) -> None:
         for f in os.listdir(self._soda_checks_folder):
-            if f.endswith(".yaml"):
-                gcp_project, dataset, scan = self._run_scan(f)
-                logging.info(f"Scan {f} finished")
-                self._publish_results(gcp_project, dataset, scan)
-                logging.info(f"Successfully published results from scan {f}")
+            if not f.endswith(".yaml") and not f.endswith(".yml"):
+                continue
+            contract_path = os.path.join(self._soda_checks_folder, f)
+            logging.info(f"Running contract {f}")
+            self._run_and_publish(contract_path)
+            logging.info(f"Successfully published results from contract {f}")
 
-    def _run_scan(self, f: str) -> tuple[str, str, Scan]:
-        s = Scan()
-        self._add_configuration_yaml(s)
-        dataset = f.split(".")[0]
-        s.set_data_source_name(dataset)
-        s.add_sodacl_yaml_file(f"{self._soda_checks_folder}/{f}")
-        s.execute()
-        return self._get_gcp_project(dataset), dataset, s
+    def _run_and_publish(self, contract_path: str) -> None:
+        result = verify_contract_locally(
+            contract_file_path=contract_path,
+            data_source_file_path=self._soda_config,
+        )
+        for cvr in result.contract_verification_results:
+            prefixes = cvr.contract.dataset_prefix or []
+            gcp_project = prefixes[0] if len(prefixes) > 0 else ""
+            bq_dataset = prefixes[1] if len(prefixes) > 1 else ""
+            table = cvr.contract.dataset_name or ""
 
-    def _add_configuration_yaml(self, s: Scan) -> None:
-        with open(self._soda_config, "r") as f:
-            cfg = yaml.safe_load(f.read())
-        s.add_configuration_yaml_str(yaml.dump(cfg))
-        
+            test_results = [self._create_test_result(cr, table) for cr in cvr.check_results]
+            error_str = cvr.get_errors_str() if cvr.has_errors else None
 
-    def _get_gcp_project(self, dataset: str) -> str:
-        with open(self._soda_config, "r") as f:
-            cfg = yaml.safe_load(f)
-        for k in cfg.keys():
-            try:
-                if cfg[k]["connection"]["dataset"] == dataset:
-                    return cfg[k]["connection"]["project_id"]
-            except KeyError:
-                if cfg[k]["dataset"] == dataset:
-                    return cfg[k]["project_id"]
+            res = requests.post(f"{self._soda_api}/soda/new", json={
+                "gcpProject": gcp_project,
+                "dataset": bq_dataset,
+                "slackChannel": self._slack_channel,
+                "slackNotifyOnScanPassed": os.getenv("NOTIFY_OK_SCAN_STATUS"),
+                "dockerImage": self._docker_image,
+                "testResults": test_results,
+                "configError": error_str,
+            })
+            res.raise_for_status()
 
-        raise KeyError(f"dataset {dataset} not found in config")
+    def _create_test_result(self, check_result, table: str) -> dict:
+        metric_values = None
+        if check_result.diagnostic_metric_values:
+            metric_values = {
+                k: v for k, v in check_result.diagnostic_metric_values.items()
+                if isinstance(v, (int, float, str, bool))
+            }
 
-    def _publish_results(self, gcp_project: str, dataset: str, scan: Scan):
-        results = [self._create_soda_result(r) for r in scan.get_scan_results().get("checks")]
-        res = requests.post(f"{self._soda_api}/soda/new", json={
-            "gcpProject": gcp_project,
-            "dataset": dataset,
-            "slackChannel": self._slack_channel,
-            "slackNotifyOnScanPassed": os.getenv("NOTIFY_OK_SCAN_STATUS"),
-            "dockerImage": self._docker_image,
-            "testResults": results,
-            "configError": scan.get_error_logs_text() if scan.has_error_logs() else None,
-        })
-        res.raise_for_status()
-
-    def _create_soda_result(self, res: dict) -> dict:
         return {
-            "id": res["identity"],
-            "table": res["table"],
-            "test": res["name"],
-            "definition": res["definition"],
-            "metrics": res["metrics"],
-            "outcome": res["outcome"],
+            "id": check_result.check.identity,
+            "table": table,
+            "test": check_result.check.name or check_result.check.definition,
+            "definition": check_result.check.definition,
+            "metrics": metric_values,
+            "outcome": check_result.outcome.name,
             "time": datetime.now().isoformat(),
-            "resourceAttributes": res.get("resourceAttributes"),
-            "column": res.get("column"),
-            "type": res.get("type"),
-            "filter": res.get("filter"),
-            "slack": self._slack_channel
+            "column": check_result.check.column_name or "",
+            "type": check_result.check.type or "",
         }
+
 
 if __name__ == "__main__":
     try:
@@ -101,9 +86,9 @@ if __name__ == "__main__":
         logging.error("Environment variables SODA_CONFIG, SODA_CHECKS_FOLDER and SLACK_CHANNEL are all required to run this script")
         exit(1)
 
-    soda_checks = NadaSoda(config_path, checks_path, slack_channel, os.environ["NAIS_APP_IMAGE"])
+    soda_checks = NadaSoda(config_path, checks_path, slack_channel)
     try:
         soda_checks.run()
-    except:
+    except Exception:
         logging.error("Running SODA checks failed")
         raise

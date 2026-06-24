@@ -35,6 +35,7 @@ ENV PYTHONPATH="/app/venv/lib/python3.11/site-packages"
 ENV PATH="/app/venv/bin:${PATH}"
 
 ENV SODA_API=http://nada-soda.nada
+ENV SODA_CORE_TELEMETRY_ENABLED=false
 
 WORKDIR /app
 
