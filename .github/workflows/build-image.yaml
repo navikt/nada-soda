@@ -21,15 +21,17 @@ jobs:
         run: |
           if [ "${{ github.ref_name }}" = "main" ]; then
             echo "name=nada-soda-contracts" >> "$GITHUB_OUTPUT"
+            echo "suffix=-contracts" >> "$GITHUB_OUTPUT"
           else
             echo "name=nada-soda" >> "$GITHUB_OUTPUT"
+            echo "suffix=" >> "$GITHUB_OUTPUT"
           fi
       - name: Push docker image to GAR
         uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
           team: nada
-          image: ${{ steps.image-name.outputs.name }}
+          image_suffix: ${{ steps.image-name.outputs.suffix }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v4
         with:
