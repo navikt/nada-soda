@@ -21,7 +21,7 @@ jobs:
         run: |
           if [ "${{ github.ref_name }}" = "main" ]; then
             echo "name=nada-soda-contracts" >> "$GITHUB_OUTPUT"
-            echo "suffix=-contracts" >> "$GITHUB_OUTPUT"
+            echo "suffix=contracts" >> "$GITHUB_OUTPUT"
           else
             echo "name=nada-soda" >> "$GITHUB_OUTPUT"
             echo "suffix=" >> "$GITHUB_OUTPUT"
