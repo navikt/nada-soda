@@ -45,6 +45,6 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with: 
-          name: ${{ steps.docker-build-push.outputs.tag }}
+          name: ${{ steps.image-name.outputs.name }}:${{ steps.docker-build-push.outputs.tag }}
           makeLatest: ${{ github.ref_name == 'main' }}
           tag: ${{ steps.docker-build-push.outputs.tag }}
