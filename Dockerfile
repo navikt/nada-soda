@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS builder
+FROM python:3.14-slim AS builder
 
 LABEL "org.opencontainers.image.source"="https://github.com/navikt/nada-soda"
 
@@ -19,7 +19,7 @@ RUN python3 -m venv venv --without-pip
 RUN pip --python venv/bin/python install -r requirements.txt
 
 
-FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/python:3.11@sha256:bbcd746c434871c83200934e173ddef0b3720418dc3616d52ebe9f12a59d808f
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/python:3.14@sha256:6bb89c892193440702271094a1785ae11b0fc33178929cd4130799d574036538
 
 ARG USER=soda
 ARG UID=1069
@@ -31,7 +31,7 @@ COPY --from=builder --chown=${USER}:${UID} ${USER_HOME_DIR} ${USER_HOME_DIR}
 
 COPY --from=builder /app /app       
 
-ENV PYTHONPATH="/app/venv/lib/python3.11/site-packages"
+ENV PYTHONPATH="/app/venv/lib/python3.14/site-packages"
 ENV PATH="/app/venv/bin:${PATH}"
 
 ENV SODA_API=http://nada-soda.nada
