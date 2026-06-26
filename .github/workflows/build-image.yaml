@@ -22,9 +22,11 @@ jobs:
           if [ "${{ github.ref_name }}" = "main" ]; then
             echo "name=nada-soda-contracts" >> "$GITHUB_OUTPUT"
             echo "suffix=contracts" >> "$GITHUB_OUTPUT"
+            echo "ghcr_name=soda-contracts" >> "$GITHUB_OUTPUT"
           else
             echo "name=nada-soda" >> "$GITHUB_OUTPUT"
             echo "suffix=" >> "$GITHUB_OUTPUT"
+            echo "ghcr_name=soda" >> "$GITHUB_OUTPUT"
           fi
       - name: Push docker image to GAR
         uses: nais/docker-build-push@v0
@@ -43,7 +45,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/${{ steps.image-name.outputs.name }}:${{ steps.docker-build-push.outputs.tag }}
+          tags: ghcr.io/${{ github.repository }}/${{ steps.image-name.outputs.ghcr_name }}:${{ steps.docker-build-push.outputs.tag }}
       - name: Create release
         uses: ncipollo/release-action@v1
         with: 
