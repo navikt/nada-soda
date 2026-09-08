@@ -13,6 +13,12 @@ updates:
       pip:
         patterns:
           - "*"
+    ignore:
+      # soda-core (via soda-bigquery) requires requests<2.34.0; bumping past
+      # this breaks the Docker build. Remove this once the upstream
+      # constraint is relaxed.
+      - dependency-name: "requests"
+        versions: [">=2.34.0"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
