@@ -19,7 +19,7 @@ RUN python3 -m venv venv --without-pip
 RUN pip --python venv/bin/python install -r requirements.txt
 
 
-FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/python:3.14@sha256:b80d8b170fe7b9c2680290db5b1cf83e4814469c7e8517c4d21cec8ac7bb9178
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/python:3.14@sha256:ced46cb7e45431f72c305851ce17f2f650f4beef5c235a5922d00327bd2f2d02
 
 ARG USER=soda
 ARG UID=1069
