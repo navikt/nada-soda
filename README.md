@@ -18,10 +18,6 @@
 
  Nye tags publiseres automatisk ved push til `main`.  
  Se [releases](https://github.com/navikt/nada-soda/releases) for tilgjengelige tags.
-
- Tags bruker det numeriske formatet `YYYY.MM.DD.HHMMSS` (UTC), for eksempel `2026.11.23.115742`, slik at Dependabot kan sammenligne versjonene. Samme tag publiseres i GAR og GHCR og brukes for releasen. Det tidligere formatet med tidsstempel og commit-hash publiseres også som en ekstra image-tag.
-
- Repositorier som bruker det tidligere tag-formatet må oppdatere taggen i Dockerfile (eventuelt `Dockerfile.dummy`) og Naisjobb-spesifikasjonen til en numerisk tag én gang. Deretter kan Dependabot opprette PR-er for nye versjoner.
  
  ## Miljøvariabler
  
